@@ -10,12 +10,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"strings"
 
 	"github.com/fatih/color"
-	multierror "github.com/hashicorp/go-multierror"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -24,10 +22,10 @@ import (
 )
 
 var (
-	version                 = "dev"
-	commit                  = "none"
-	date                    = "unknown"
-	directories             = []string{}
+	version             = "dev"
+	commit              = "none"
+	date                = "unknown"
+	directories         = []string{}
 	ignoredPathPatterns = []string{}
 
 	// forceColor tells kubeval to use colored output even if
@@ -165,70 +163,18 @@ var RootCmd = &cobra.Command{
 
 // hasErrors returns truthy if any of the provided results
 // contain errors.
-func hasErrors(res []kubeval.ValidationResult) bool {
-	for _, r := range res {
-		if len(r.Errors) > 0 {
-			return true
-		}
-	}
-	return false
-}
+func hasErrors(res []kubeval.ValidationResult) bool { _ = "STUB: not implemented"; return false }
 
 // isIgnored returns whether the specified filename should be ignored.
-func isIgnored(path string) (bool, error) {
-	for _, p := range ignoredPathPatterns {
-		m, err := regexp.MatchString(p, path)
-		if err != nil {
-			return false, err
-		}
-		if m {
-			return true, nil
-		}
-	}
-	return false, nil
-}
+func isIgnored(path string) (bool, error) { _ = "STUB: not implemented"; return false, nil }
 
-func aggregateFiles(args []string) ([]string, error) {
-	files := make([]string, len(args))
-	copy(files, args)
+func aggregateFiles(args []string) ([]string, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	var allErrors *multierror.Error
-	for _, directory := range directories {
-		err := filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				return err
-			}
-			ignored, err := isIgnored(path)
-			if err != nil {
-				return err
-			}
-			if !info.IsDir() && (strings.HasSuffix(info.Name(), ".yaml") || strings.HasSuffix(info.Name(), ".yml")) && !ignored {
-				files = append(files, path)
-			}
-			return nil
-		})
-		if err != nil {
-			allErrors = multierror.Append(allErrors, err)
-		}
-	}
-
-	return files, allErrors.ErrorOrNil()
-}
-
-func earlyExit() {
-	if config.ExitOnError {
-		os.Exit(1)
-	}
-}
+func earlyExit() { _ = "STUB: not implemented"; return }
 
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	if err := RootCmd.Execute(); err != nil {
-		log.Error(err)
-		os.Exit(-1)
-	}
-}
+func Execute() { _ = "STUB: not implemented"; return }
 
 func init() {
 	rootCmdName := filepath.Base(os.Args[0])
@@ -242,7 +188,7 @@ func init() {
 	RootCmd.Flags().StringSliceVarP(&directories, "directories", "d", []string{}, "A comma-separated list of directories to recursively search for YAML documents")
 	RootCmd.Flags().StringSliceVarP(&ignoredPathPatterns, "ignored-path-patterns", "i", []string{}, "A comma-separated list of regular expressions specifying paths to ignore")
 	RootCmd.Flags().StringSliceVarP(&ignoredPathPatterns, "ignored-filename-patterns", "", []string{}, "An alias for ignored-path-patterns")
-	
+
 	viper.SetEnvPrefix("KUBEVAL")
 	viper.AutomaticEnv()
 	viper.BindPFlag("schema_location", RootCmd.Flags().Lookup("schema-location"))
